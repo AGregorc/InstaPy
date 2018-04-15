@@ -1,13 +1,17 @@
-import os
-import time
-from tempfile import gettempdir
+# -*- coding: utf-8 -*-
 
-from selenium.common.exceptions import NoSuchElementException
+import traceback
+import time
+import datetime
+from random import shuffle
+from random import uniform
 
 from instapy import InstaPy
+from insta_users import *
 
-insta_username = ''
-insta_password = ''
+
+sleep_minutes = 30
+SESSION_DURATION = 6 * 60 * 60 # hours * minutes * seconds
 
 # set headless_browser=True if you want to run InstaPy on a server
 
@@ -16,35 +20,69 @@ insta_password = ''
 #   Settings.database_location = '/path/to/instapy.db'
 #   Settings.chromedriver_location = '/path/to/chromedriver'
 
-session = InstaPy(username=insta_username,
+
+tags = ['natgeo','amazing', 'view', 'Bled', 'Slovenia', 'winter', 'travelling']
+other_tags = ['first',  'eye', 'lake', 'nature', 'wildlife', 'ig_today', 'tree', 'forests', 'love', 'green', 'sky', 'tbt', 'pretty', 'selfie']
+last_picture_tags = ['fun', 'time', 'sun', 'sunglasses', 'dog', 'lemonade', 'dogstagram', 'lovedogs', 'dogsofinstagram', 'selfie', 'chill', 'weekend', 'weekendvibes', 'sunny', 'sunshine', 'summer']
+all_tags = tags+other_tags+last_picture_tags
+shuffle(all_tags)
+all_tags = all_tags[0:int(len(all_tags)*uniform(0.7,1))]
+
+locations = [
+                '214473716/centralna-postaja-ljubljana/', '314668210/center-ljubljana/', 
+                '220764453/ljubljanski-grad-ljubljana-castle/', '220764453/ljubljanski-grad-ljubljana-castle/',
+                '213783784/neboticnik-skyscraper/', '217264051/cirkus/', '216382022/bled-slovenia/',
+                '219907852/portoroz/', '250609403/zale/', '28108257/bled-castle/', '3914101/hotel-grand-metropol-portoroz/',
+                '235518406/metelkova/', '253581293/triglav-national-park/', '570516765/lucija-piran/',
+                '16011059/vrhnika/', '240101335/kavarna-rog/', '248355601/beograd-serbia/',
+                '828831498/troja-lounge-bar-club/', '264003924/ljubljana-botanical-garden/',
+                '281344734/ljubljana-railway-station/', '215729531/kino-siska/'
+                ]
+
+
+def init_new_session():
+    return InstaPy(username=insta_username,
                   password=insta_password,
                   headless_browser=False,
+                  nogui=True,
                   multi_logs=True)
 
-try:
-    session.login()
 
-    # settings
-    session.set_upper_follower_count(limit=2500)
-    session.set_do_comment(True, percentage=10)
-    session.set_comments(['aMEIzing!', 'So much fun!!', 'Nicey!'])
-    session.set_dont_include(['friend1', 'friend2', 'friend3'])
-    session.set_dont_like(['pizza', 'girl'])
+def start_session(start):
+    try:
+        session = init_new_session()
+        session.login()
 
-    # actions
-    session.like_by_tags(['natgeo'], amount=1)
+        while True:
+            if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
+                return None
 
-except Exception as exc:
-    # if changes to IG layout, upload the file to help us locate the change
-    if isinstance(exc, NoSuchElementException):
-        file_path = os.path.join(gettempdir(), '{}.html'.format(time.strftime('%Y%m%d-%H%M%S')))
-        with open(file_path, 'wb') as fp:
-            fp.write(session.browser.page_source.encode('utf8'))
-        print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
-            '*' * 70, file_path))
-    # full stacktrace when raising Github issue
-    raise
+            # settings
+            session.set_upper_follower_count(limit=2000)
+            #session.set_do_follow(enabled=True, percentage=20)
+            session.set_dont_unfollow_active_users(enabled=True, posts=3)
+            session.set_do_like(enabled=True, percentage=90)
+            session.set_comments([u"👌👍", u"Cool 👌👍", "<3", u"😍", u"😏👍😀"])
+            session.set_do_comment(enabled=True, percentage=50)
+            
+            # actions
+            #session.follow_by_tags(tags, amount=20)
+            #session.like_by_locations(locations, amount=30)
+            session.like_by_tags(all_tags, amount=30)
+            session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
 
-finally:
-    # end the bot session
-    session.end()
+            if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
+                return None
+            time.sleep(sleep_minutes*60)
+
+    except Exception as exc:
+        # full stacktrace when raising Github issue
+        traceback.print_exc(exc)
+        time.sleep(sleep_minutes*60)
+        start_session(start)
+
+    finally:
+        # end the bot session
+        session.end()
+
+start_session(datetime.datetime.now())
