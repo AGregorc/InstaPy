@@ -54,8 +54,8 @@ def start_session(start):
         session.login()
 
         while True:
-            if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
-                return None
+            #if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
+            #    return None
 
             # settings
             session.set_upper_follower_count(limit=2000)
@@ -66,13 +66,14 @@ def start_session(start):
             session.set_do_comment(enabled=True, percentage=50)
             
             # actions
+            session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
             #session.follow_by_tags(tags, amount=20)
             #session.like_by_locations(locations, amount=30)
             session.like_by_tags(all_tags, amount=30)
             session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
 
-            if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
-                return None
+            #if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
+            #    return None
             time.sleep(sleep_minutes*60)
 
     except Exception as exc:
@@ -82,7 +83,8 @@ def start_session(start):
         start_session(start)
 
     finally:
-        # end the bot session
-        session.end()
+        # end the bot 
+        if session is not None:
+            session.end()
 
 start_session(datetime.datetime.now())
