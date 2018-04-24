@@ -2,6 +2,7 @@
 
 import traceback
 import time
+import math
 from random import shuffle
 from random import uniform
 import schedule
@@ -66,8 +67,8 @@ def start_session():
             # actions
             session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
             #session.follow_by_tags(tags, amount=20)
-            session.like_by_locations(locations, amount=30)
-            session.like_by_tags(all_tags, amount=50)
+            session.like_by_locations(locations, amount=math.floor(30/len(locations)))
+            session.like_by_tags(all_tags, amount=math.floor(50/len(all_tags)))
             session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
             session.like_by_feed(amount=70, randomize=True, interact=True)
 
