@@ -87,7 +87,12 @@ def start_session():
         if session is not None:
             session.end()
 
-start_session()
+now = input("Do you want to start now? (Y/N)")
+if now == "Y":
+    print("Session is starting.")
+    start_session()
+else:
+    print("Session will start on schedule.")
 
 schedule.every().day.at("6:35").do(start_session)
 schedule.every().day.at("8:13").do(start_session)
