@@ -2,9 +2,9 @@
 
 import traceback
 import time
-import datetime
 from random import shuffle
 from random import uniform
+import schedule
 
 from instapy import InstaPy
 from insta_users import *
@@ -48,43 +48,51 @@ def init_new_session():
                   multi_logs=True)
 
 
-def start_session(start):
+def start_session():
     try:
         session = init_new_session()
         session.login()
 
         while True:
-            #if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
-            #    return None
 
             # settings
             session.set_upper_follower_count(limit=2000)
             #session.set_do_follow(enabled=True, percentage=20)
             session.set_dont_unfollow_active_users(enabled=True, posts=3)
-            session.set_do_like(enabled=True, percentage=90)
+            #session.set_do_like(enabled=True, percentage=90)
             session.set_comments([u"👌👍", u"Cool 👌👍", "<3", u"😍", u"😏👍😀"])
-            session.set_do_comment(enabled=True, percentage=50)
+            session.set_do_comment(enabled=True, percentage=20)
             
             # actions
             session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
             #session.follow_by_tags(tags, amount=20)
-            #session.like_by_locations(locations, amount=30)
-            session.like_by_tags(all_tags, amount=30)
+            session.like_by_locations(locations, amount=30)
+            session.like_by_tags(all_tags, amount=50)
             session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
+            session.like_by_feed(amount=70, randomize=True, interact=True)
 
             #if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
             #    return None
-            time.sleep(sleep_minutes*60)
+            #time.sleep(sleep_minutes*60)
 
     except Exception as exc:
         # full stacktrace when raising Github issue
         traceback.print_exc(exc)
-        time.sleep(sleep_minutes*60)
-        start_session(start)
+        #time.sleep(sleep_minutes*60)
+        #start_session(start)
 
     finally:
         # end the bot 
         if session is not None:
             session.end()
 
-start_session(datetime.datetime.now())
+start_session()
+
+schedule.every().day.at("6:35").do(start_session)
+schedule.every().day.at("8:13").do(start_session)
+schedule.every().day.at("16:28").do(start_session)
+schedule.every().day.at("21:47").do(start_session)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
