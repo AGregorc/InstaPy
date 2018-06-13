@@ -48,6 +48,7 @@ def init_new_session():
                   nogui=True,
                   multi_logs=True)
 
+<<<<<<< HEAD
 
 def start_session():
     try:
@@ -102,3 +103,4 @@ schedule.every().day.at("21:47").do(start_session)
 while True:
     schedule.run_pending()
     time.sleep(1)
+
