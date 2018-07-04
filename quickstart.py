@@ -6,6 +6,7 @@ import math
 from random import shuffle
 from random import uniform
 import schedule
+import datetime
 
 from instapy import InstaPy
 from insta_users import *
@@ -57,6 +58,7 @@ def start_session():
     try:
         session = init_new_session()
         session.login()
+        start = datetime.datetime.now()
 
         while True:
             if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
@@ -100,7 +102,7 @@ def start_session():
         if session is not None:
             session.end()
 
-now = input("Do you want to start now? (Y/N)")
+now = raw_input("Do you want to start now? (Y/N)")
 if now == "Y":
     print("Session is starting.")
     start_session()

@@ -97,7 +97,8 @@ ENV/
 .DS_Store
 
 # Storage
-instapy.db
+db/instapy.db
+*.db
 logs/
 
 # Editors
