@@ -2,9 +2,10 @@
 
 import traceback
 import time
-import datetime
+import math
 from random import shuffle
 from random import uniform
+import schedule
 
 from instapy import InstaPy
 from insta_users import *
@@ -52,7 +53,7 @@ def init_new_session():
                   multi_logs=True)
 
 
-def start_session(start):
+def start_session():
     try:
         session = init_new_session()
         session.login()
@@ -99,4 +100,19 @@ def start_session(start):
         if session is not None:
             session.end()
 
-start_session(datetime.datetime.now())
+now = input("Do you want to start now? (Y/N)")
+if now == "Y":
+    print("Session is starting.")
+    start_session()
+else:
+    print("Session will start on schedule.")
+
+schedule.every().day.at("6:35").do(start_session)
+schedule.every().day.at("8:13").do(start_session)
+schedule.every().day.at("16:28").do(start_session)
+schedule.every().day.at("21:47").do(start_session)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
+
