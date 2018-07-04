@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from .util import update_activity
 import pickle
+import time
 
 
 def bypass_suspicious_login(browser):
@@ -109,6 +110,9 @@ def login_user(browser,
     except (WebDriverException, OSError, IOError):
         print("Cookie file not found, creating cookie...")
 
+    # include time.sleep(1) to prevent getting stuck on google.com
+    time.sleep(1)
+    
     browser.get('https://www.instagram.com')
 
     # Cookie has been loaded, user should be logged in. Ensurue this is true
@@ -129,7 +133,7 @@ def login_user(browser,
     # Might cause problems if the OS language is english
     if switch_language:
         browser.find_element_by_xpath(
-          "//select[@class='_fsoey']/option[text()='English']").click()
+          "//select[@class='hztqj']/option[text()='English']").click()
 
     # Check if the first div is 'Create an Account' or 'Log In'
     login_elem = browser.find_element_by_xpath(
@@ -140,6 +144,7 @@ def login_user(browser,
     # Enter username and password and logs the user in
     # Sometimes the element name isn't 'Username' and 'Password'
     # (valid for placeholder too)
+    sleep(1) 
     input_username = browser.find_elements_by_xpath(
         "//input[@name='username']")
 
@@ -148,6 +153,8 @@ def login_user(browser,
     sleep(1)
     input_password = browser.find_elements_by_xpath(
         "//input[@name='password']")
+    if not isinstance(password, str):
+        password = str(password)
     ActionChains(browser).move_to_element(input_password[0]). \
         click().send_keys(password).perform()
 
