@@ -126,7 +126,7 @@ def start_session():
         # time.sleep(uniform(min_sleep_minutes * 60, max_sleep_minutes * 60))
 
 
-debug = True
+debug = False
 if not debug:
     now = input("Do you want to start now? (Y/N)")
     if now == "Y":
