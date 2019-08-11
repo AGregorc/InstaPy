@@ -8,6 +8,8 @@ from random import uniform
 import schedule
 
 from instapy import InstaPy
+from instapy import smart_run
+from instapy import set_workspace
 from insta_users import *
 
 
@@ -30,7 +32,7 @@ shuffle(all_tags)
 all_tags = all_tags[0:int(len(all_tags)*uniform(0.7,1))]
 
 locations = [
-                '214473716/centralna-postaja-ljubljana/', '314668210/center-ljubljana/', 
+                '214473716/centralna-postaja-ljubljana/', '314668210/center-ljubljana/',
                 '220764453/ljubljanski-grad-ljubljana-castle/', '220764453/ljubljanski-grad-ljubljana-castle/',
                 '213783784/neboticnik-skyscraper/', '217264051/cirkus/', '216382022/bled-slovenia/',
                 '219907852/portoroz/', '250609403/zale/', '28108257/bled-castle/', '3914101/hotel-grand-metropol-portoroz/',
@@ -45,32 +47,41 @@ def init_new_session():
     return InstaPy(username=insta_username,
                   password=insta_password,
                   headless_browser=False,
-                  nogui=True,
+                  nogui=False,
                   multi_logs=True)
 
-<<<<<<< HEAD
+# set workspace folder at desired location (default is at your home folder)
+set_workspace(path=None)
 
 def start_session():
     try:
         session = init_new_session()
         session.login()
 
-        while True:
+        for i in range(1):
 
             # settings
-            session.set_upper_follower_count(limit=2000)
+            session.set_relationship_bounds(enabled=True,
+                                            potency_ratio=None,
+                                            delimit_by_numbers=None,
+                                            max_followers=8500,
+                                            max_following=4490,
+                                            min_followers=20,
+                                            min_following=15,
+                                            min_posts=1,
+                                            max_posts=1000)
             #session.set_do_follow(enabled=True, percentage=20)
-            session.set_dont_unfollow_active_users(enabled=True, posts=3)
+            session.set_dont_unfollow_active_users(enabled=True, posts=5)
             #session.set_do_like(enabled=True, percentage=90)
             session.set_comments([u"👌👍", u"Cool 👌👍", "<3", u"😍", u"😏👍😀"])
             session.set_do_comment(enabled=True, percentage=20)
-            
+
             # actions
-            session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
-            #session.follow_by_tags(tags, amount=20)
+            session.unfollow_users(amount=10, nonFollowers=True, unfollow_after=42*60*60)
+            session.follow_by_tags(tags, amount=20)
             session.like_by_locations(locations, amount=math.floor(30/len(locations)))
             session.like_by_tags(all_tags, amount=math.floor(50/len(all_tags)))
-            session.unfollow_users(amount=10, onlyNotFollowMe=True, sleep_delay=60)
+            session.unfollow_users(amount=10, nonFollowers=True, unfollow_after=42*60*60)
             session.like_by_feed(amount=70, randomize=True, interact=True)
 
             #if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
@@ -81,19 +92,24 @@ def start_session():
         # full stacktrace when raising Github issue
         traceback.print_exc(exc)
         #time.sleep(sleep_minutes*60)
-        #start_session(start)
+        #start_session()
 
     finally:
-        # end the bot 
+        # end the bot
         if session is not None:
             session.end()
 
-now = input("Do you want to start now? (Y/N)")
-if now == "Y":
-    print("Session is starting.")
-    start_session()
+
+debug = False
+if not debug:
+    now = input("Do you want to start now? (Y/N)")
+    if now == "Y":
+        print("Session is starting.")
+        start_session()
+    else:
+        print("Session will start on schedule.")
 else:
-    print("Session will start on schedule.")
+    start_session()
 
 schedule.every().day.at("6:35").do(start_session)
 schedule.every().day.at("8:13").do(start_session)

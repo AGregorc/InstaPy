@@ -7,6 +7,7 @@ __pycache__/
 *$py.class
 
 quickstart.py
+docker_quickstart.py
 
 # C extensions
 *.so
@@ -97,16 +98,23 @@ ENV/
 .DS_Store
 
 # Storage
-instapy.db
+*.db
 logs/
 
 # Editors
 .idea
 .vscode
+.bak
 
 # pytest
 .pytest_cache/
 tests/logs
+
+# Pipfile
+Pipfile
+
+# Instances
+z_*
 
 # users
 insta_users.py
