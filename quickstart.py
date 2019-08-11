@@ -6,6 +6,7 @@ import math
 from random import shuffle
 from random import uniform
 import schedule
+import datetime
 
 from instapy import InstaPy
 from instapy import smart_run
@@ -13,8 +14,9 @@ from instapy import set_workspace
 from insta_users import *
 
 
-sleep_minutes = 30
-SESSION_DURATION = 6 * 60 * 60 # hours * minutes * seconds
+min_sleep_minutes = 2
+max_sleep_minutes = 15
+SESSION_DURATION = 1 * 60 * 60   # hours * minutes * seconds
 
 # set headless_browser=True if you want to run InstaPy on a server
 
@@ -27,9 +29,7 @@ SESSION_DURATION = 6 * 60 * 60 # hours * minutes * seconds
 tags = ['natgeo','amazing', 'view', 'Bled', 'Slovenia', 'winter', 'travelling']
 other_tags = ['first',  'eye', 'lake', 'nature', 'wildlife', 'ig_today', 'tree', 'forests', 'love', 'green', 'sky', 'tbt', 'pretty', 'selfie']
 last_picture_tags = ['fun', 'time', 'sun', 'sunglasses', 'dog', 'lemonade', 'dogstagram', 'lovedogs', 'dogsofinstagram', 'selfie', 'chill', 'weekend', 'weekendvibes', 'sunny', 'sunshine', 'summer']
-all_tags = tags+other_tags+last_picture_tags
-shuffle(all_tags)
-all_tags = all_tags[0:int(len(all_tags)*uniform(0.7,1))]
+
 
 locations = [
                 '214473716/centralna-postaja-ljubljana/', '314668210/center-ljubljana/',
@@ -43,6 +43,13 @@ locations = [
                 ]
 
 
+def get_shuffled_tags():
+    all_tags = tags+other_tags+last_picture_tags
+    shuffle(all_tags)
+    all_tags = all_tags[0:int(len(all_tags)*uniform(0.7,1))]
+    return all_tags
+
+
 def init_new_session():
     return InstaPy(username=insta_username,
                   password=insta_password,
@@ -50,15 +57,20 @@ def init_new_session():
                   nogui=False,
                   multi_logs=True)
 
+
 # set workspace folder at desired location (default is at your home folder)
 set_workspace(path=None)
+
 
 def start_session():
     try:
         session = init_new_session()
         session.login()
+        start = datetime.datetime.now()
 
-        for i in range(1):
+        while True:
+            if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
+                return None
 
             # settings
             session.set_relationship_bounds(enabled=True,
@@ -74,25 +86,29 @@ def start_session():
             session.set_dont_unfollow_active_users(enabled=True, posts=5)
             #session.set_do_like(enabled=True, percentage=90)
             session.set_comments([u"👌👍", u"Cool 👌👍", "<3", u"😍", u"😏👍😀"])
+            session.set_do_comment(enabled=True, percentage=50)
+
+            all_tags = get_shuffled_tags()
+            
             session.set_do_comment(enabled=True, percentage=20)
 
             # actions
             session.unfollow_users(amount=10, nonFollowers=True, unfollow_after=42*60*60)
-            session.follow_by_tags(tags, amount=20)
+            # session.follow_by_tags(tags, amount=20)
             session.like_by_locations(locations, amount=math.floor(30/len(locations)))
             session.like_by_tags(all_tags, amount=math.floor(50/len(all_tags)))
             session.unfollow_users(amount=10, nonFollowers=True, unfollow_after=42*60*60)
             session.like_by_feed(amount=70, randomize=True, interact=True)
 
-            #if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
-            #    return None
-            #time.sleep(sleep_minutes*60)
+            if (datetime.datetime.now() - start).total_seconds() > SESSION_DURATION:
+                return None
+            time.sleep(uniform(min_sleep_minutes*60, max_sleep_minutes*60))
 
     except Exception as exc:
         # full stacktrace when raising Github issue
         traceback.print_exc(exc)
-        #time.sleep(sleep_minutes*60)
-        #start_session()
+        time.sleep(uniform(min_sleep_minutes*60, max_sleep_minutes*60))
+        start_session(start)
 
     finally:
         # end the bot
