@@ -59,7 +59,7 @@ def init_new_session():
 
 
 # set workspace folder at desired location (default is at your home folder)
-set_workspace(path=None)
+set_workspace(path=workspace_path)
 
 
 def start_session():
