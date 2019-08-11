@@ -54,7 +54,7 @@ def init_new_session():
     return InstaPy(username=insta_username,
                   password=insta_password,
                   headless_browser=False,
-                  nogui=False,
+                  nogui=no_gui,
                   multi_logs=True)
 
 
