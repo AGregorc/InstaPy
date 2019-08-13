@@ -105,7 +105,7 @@ def start_session():
         session.set_dont_unfollow_active_users(enabled=True, posts=1)
         # session.set_do_like(enabled=True, percentage=90)
         session.set_comments(
-            [u"@{} 👌👍", u"Cool 👌👍", "@{} <3", u"😍", u"😏👍😀", "<3", u"👌👍", u"👍😀", u"@{} 👍😀", u"😏👍", ])
+            [u"@{} 👌👍", u"Cool 👌👍", "@{} <3", u"😍", u"😏👍😀", "<3", u"👌👍", u"👍😀", u"@{} 👍😀", u"😏👍" ])
         session.set_do_comment(enabled=True, percentage=18)
         session.set_do_like(enabled=True, percentage=67)
         session.set_do_story(enabled=True, percentage=23, simulate=False)
@@ -118,8 +118,8 @@ def start_session():
         # actions
         session.unfollow_users(amount=10, nonFollowers=True, unfollow_after=42 * 60 * 60)
         # session.follow_by_tags(tags, amount=20)
-        # session.like_by_locations(locations, amount=math.floor(30 / len(locations)))
-        session.like_by_tags(all_tags, amount=math.floor(50 / len(all_tags)))
+        session.like_by_locations(locations, amount=math.floor(30 / len(locations)))
+        # session.like_by_tags(all_tags, amount=math.floor(50 / len(all_tags)))
         session.like_by_tags(amount=4, use_smart_location_hashtags=True)
         session.unfollow_users(amount=10, nonFollowers=True, unfollow_after=42 * 60 * 60)
         session.like_by_feed(amount=15, randomize=True, interact=True)
