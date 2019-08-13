@@ -55,7 +55,7 @@ def get_shuffled_tags():
 def init_new_session():
     return InstaPy(username=insta_username,
                    password=insta_password,
-                   headless_browser=False,
+                   headless_browser=headless_browser,
                    nogui=no_gui,
                    multi_logs=True,
                    bypass_with_mobile=True)
@@ -135,7 +135,7 @@ def start_instapy():
     except Exception as err:
         print("Error!! sending mail")
         mail.send_mail(["anze.gregorc44@gmail.com"], "InstaPy Error",
-                       "Pozor, nov exception!! \n\n {0}".format(str(err)))
+                       "Pozor, nov exception!! \n\n Traceback: \n{0} \n\n Exception: \n{1}".format(traceback.format_exc(), str(e)))
 
 
 mail = send_mail.Mail()
@@ -159,6 +159,6 @@ while True:
     try:
         schedule.run_pending()
     except Exception as e:
-        mail.send_mail(["anze.gregorc44@gmail.com"], "InstaPy Error", "Pozor, nov exception!! \n\n {0}".format(str(e)))
+        mail.send_mail(["anze.gregorc44@gmail.com"], "InstaPy Error", "Pozor, nov exception pri run schedule!! \n\n Traceback: \n{0} \n\n Exception: \n{1}".format(traceback.format_exc(), str(e)))
     finally:
         time.sleep(1)
