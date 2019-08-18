@@ -57,8 +57,7 @@ def init_new_session():
                    password=insta_password,
                    headless_browser=headless_browser,
                    nogui=no_gui,
-                   multi_logs=True,
-                   bypass_with_mobile=True)
+                   multi_logs=True)
 
 
 # set workspace folder at desired location (default is at your home folder)
@@ -90,11 +89,16 @@ def start_session():
         session.set_quota_supervisor(enabled=True,
                                      sleep_after=["likes", "comments_d", "follows", "unfollows"],
                                      sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                     peak_likes=(62, 552),
-                                     peak_comments=(22, 134),
-                                     peak_follows=(31, 84),
-                                     peak_unfollows=(35, 402),
-                                     peak_server_calls=(None, 4700))
+                                     peak_likes_hourly=62,
+                                     peak_likes_daily=552,
+                                     peak_comments_hourly=22,
+                                     peak_comments_daily=134,
+                                     peak_follows_hourly=31,
+                                     peak_follows_daily=84,
+                                     peak_unfollows_hourly=35,
+                                     peak_unfollows_daily=402,
+                                     peak_server_calls_hourly=None,
+                                     peak_server_calls_daily=4700)
 
         session.set_skip_users(skip_private=False,
                                skip_no_profile_pic=True,
@@ -108,7 +112,7 @@ def start_session():
             [u"@{} 👌👍", u"Cool 👌👍", "@{} <3", u"😍", u"😏👍😀", "<3", u"👌👍", u"👍😀", u"@{} 👍😀", u"😏👍" ])
         session.set_do_comment(enabled=True, percentage=18)
         session.set_do_like(enabled=True, percentage=67)
-        session.set_do_story(enabled=True, percentage=23, simulate=False)
+        # session.set_do_story(enabled=True, percentage=23, simulate=False)
         session.set_smart_location_hashtags(locations, radius=25, limit=7)
         session.join_pods()
 
@@ -135,7 +139,7 @@ def start_instapy():
     except Exception as err:
         print("Error!! sending mail")
         mail.send_mail(["anze.gregorc44@gmail.com"], "InstaPy Error",
-                       "Pozor, nov exception!! \n\n Traceback: \n{0} \n\n Exception: \n{1}".format(traceback.format_exc(), str(e)))
+                       "Pozor, nov exception!! \n\n Traceback: \n{0} \n\n Exception: \n{1}".format(traceback.format_exc(), str(err)))
 
 
 mail = send_mail.Mail()
